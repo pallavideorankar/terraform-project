@@ -26,6 +26,15 @@ resource "aws_subnet" "subnet1" {
   }
 }
 
+resource "aws_subnet" "subnet2" {
+  vpc_id     = aws_vpc.myvpc.id
+  cidr_block = "10.0.11.0/24"
+
+  tags = {
+    Name = "subnet2"
+  }
+}
+
 ###########RT###########
 resource "aws_route_table" "RT" {
   vpc_id = aws_vpc.myvpc.id
@@ -80,14 +89,30 @@ resource "aws_route_table_association" "a" {
   route_table_id = aws_route_table.RT.id
 }
 
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.subnet2.id
+  route_table_id = aws_route_table.RT.id
+}
+
+
 #########ec2 instance########
-resource "aws_instance" "aws" {
+resource "aws_instance" "ec2_1" {
   ami           = "ami-02b01316e6e3496d9"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.subnet1.id
+  key_name     = "newlinux"
   tags = {
-    Name = "HelloWorld"
+    Name = "HelloWorld1"
   }
 }
 
+resource "aws_instance" "ec2_2" {
+  ami           = "ami-02b01316e6e3496d9"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.subnet2.id
+ key_name     = "newlinux"
+ tags = {
+    Name = "HelloWorld2"
+  }
+}
 
